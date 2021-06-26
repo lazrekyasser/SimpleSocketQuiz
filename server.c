@@ -9,6 +9,18 @@ int random_int(int min, int max)
 {
    return min + rand() % (max + 1 - min);
 }
+void red () {
+  printf("\033[1;31m");
+}
+void green () {
+  printf("\033[1;32m");
+}
+void yellow() {
+  printf("\033[1;33m");
+}
+void reset () {
+  printf("\033[0m");
+}
 
 void handle_Unique(t_participant *par) {
     char res1[5];
@@ -18,11 +30,16 @@ void handle_Unique(t_participant *par) {
         recv(par->fdClient, res1, 5, 0);
         if (strncmp(tab_ans[index], res1, 1) == 0)
         {
+            green();
             printf("<<%s>> answer :%s -> correct\n", par->id_client, res1);
+            reset();
             par->user->score++;
         }
-        else
+        else {
+            red();
             printf("<<%s>> answer :%s -> false\n", par->id_client, res1);
+            reset();
+        }
         memset(res1, 0, 5);
     }
     send(par->fdClient, "exit", strlen("exit"), 0);
@@ -30,10 +47,16 @@ void handle_Unique(t_participant *par) {
     if (par->user->score >= 3)
         gg = 1;
     printf("user <<%s>> your finale score is [%d]:", par->id_client, par->user->score);
-    if (gg == 1)
+    if (gg == 1){
+        green();
         printf(" tu as gagner\n");
-    else
+        reset();
+    }
+    else{
+        red();
         printf(" tu as perdu\n");
+        reset();
+    }
     close(par->fdClient);//cloe connection with client
 }
 
@@ -85,14 +108,21 @@ void handle_group(t_participant *par)
             // printf("%s\n", res1);
             if (strncmp(tab_ans[index], res1, 1) == 0)
             {
+                green();
                 printf("<<%s>> answer :%s -> correct\n", par->id_client, res1);
+                reset();
                 par->user->score++;
             }
-            else
+            else {
+                red();
                 printf("<<%s>> answer :%s -> false\n", par->id_client, res1);
+                reset();
+            }
             if (par->user->score >= 3)
             {
+                yellow();
                 printf("WINNER <<%s>>\n", par->id_client);
+                reset();
                 health_var = 1;
                 // free_pars(g_participants_mult);////////
                 break ;
